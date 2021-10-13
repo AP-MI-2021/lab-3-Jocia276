@@ -1,7 +1,9 @@
 def show_menu():
+    print(" ")
     print("1. Citire lista.")
     print("2. Afisare cea mai lunga subsecventa care are toate elementele neprime.")
     print("3. Afisare cea mai lunga subsecventa care are media numerelor mai mica decat o valoare data.")
+    print("4. Afisare cea mai lunga subsecventa cu proprietatea ca numarul de cifre sa fie in ordine descrescatoare.")
     print("x. Exit")
 
 
@@ -12,6 +14,68 @@ def read_list() -> list[int]:
     for num_str in lst_str_split:
         lst.append(int(num_str))
     return lst
+
+#proprietatea 18
+
+def number_of_digits(num):
+    nr_cif = 0
+    while num:
+        nr_cif = nr_cif + 1
+        num = num // 10
+    return nr_cif
+
+
+def digit_count_desc(lst):
+
+    """
+    Determina daca o lista are o secventa de numere ordonate descrescator in functie de numarul de cifre
+    :param lst: lista de numere
+    :return: True daca lista este ordonata desresctor si False in caz contrar
+    """
+
+    for i in range(len(lst) - 1):
+        if number_of_digits(lst[i]) < number_of_digits(lst[i + 1]):
+            return False
+    return True
+
+
+def test_digit_count_desc():
+
+    assert digit_count_desc([5, 46, 2]) is False
+    assert digit_count_desc([2, 54, 65741, 21]) is False
+    assert digit_count_desc([12345, 1234, 123, 12, 1]) is True
+    assert digit_count_desc([245, 24, 5]) is True
+    assert digit_count_desc([22, 1, 656, 8953]) is False
+    assert digit_count_desc([7564, 653, 35, 10, 5]) is True
+
+
+def get_longest_digit_count_desc(lst: list[int]) -> list[int]:
+    """
+    Determina cea mai lunga secventa cu propietatea ca numarul de cifre sa fie in ordine descrescatoare
+    :param lst:Lista de numere
+    :return: Lista maxima determinata
+    """
+    lista_secvente = []
+
+    for start in range(0, len(lst) + 1):
+        for end in range(start + 1, len(lst) + 1):
+            if digit_count_desc(lst[start:end]):
+                lista_secvente.append(lst[start:end])
+    secventa_max = []
+    for secventa in lista_secvente:
+        if len(secventa) > len(secventa_max):
+            secventa_max = secventa
+
+    return secventa_max
+
+
+def test_get_longest_digit_count_desc():
+    assert get_longest_digit_count_desc([765, 43, 2, 1, 56]) == [765, 43, 2, 1]
+    assert get_longest_digit_count_desc([8]) == [8]
+    assert get_longest_digit_count_desc([1, 2, 56, 898]) == [1, 2]
+    assert get_longest_digit_count_desc([3, 12, 356]) == [3]
+    assert get_longest_digit_count_desc([1, 34, 1000, 99, 3000, 1234, 456, 34, 7, 9]) == [3000, 1234, 456, 34, 7, 9]
+
 
 #proprietatea 17
 
@@ -85,12 +149,12 @@ def is_not_prime(n: int) -> bool:
 
 def test_is_not_prime():
 
-    assert is_not_prime(4) == True
-    assert is_not_prime(2) == False
-    assert is_not_prime(13) == False
-    assert is_not_prime(24) == True
-    assert is_not_prime(54) == True
-    assert is_not_prime(3) == False
+    assert is_not_prime(4) is True
+    assert is_not_prime(2) is False
+    assert is_not_prime(13) is False
+    assert is_not_prime(24) is True
+    assert is_not_prime(54) is True
+    assert is_not_prime(3) is False
 
 
 def get_all_not_primes(lst) -> bool:
@@ -116,9 +180,9 @@ def get_longest_all_not_prime(lst: list[int]) -> list[int]:
     lista_secvente = []
 
     for start in range(0, len(lst) + 1):
-        for stop in range(start + 1, len(lst) + 1):
-            if get_all_not_primes(lst[start:stop]):
-                lista_secvente.append(lst[start:stop])
+        for end in range(start + 1, len(lst) + 1):
+            if get_all_not_primes(lst[start:end]):
+                lista_secvente.append(lst[start:end])
     secventa_max = []
     for secventa in lista_secvente:
         if len(secventa) > len(secventa_max):
@@ -143,6 +207,8 @@ def main():
     test_get_longest_average_below()
     test_is_not_prime()
     test_get_longest_all_not_prime()
+    test_digit_count_desc()
+    test_get_longest_digit_count_desc()
 
     while True:
         show_menu()
@@ -155,6 +221,8 @@ def main():
         elif opt == "3":
             average = float(input("Introduceti o valoare: "))
             print("Cea mai lunga subsecventa care are media numerelor mai mica decat o valoare data este: ", get_longest_average_below(lst, average))
+        elif opt == "4":
+            print("Cea mai lunga subsecventa cu proprietatea ca numarul de cifre sa fie in ordine descrescatoare este : ", get_longest_digit_count_desc(lst))
         elif opt == "x":
             break
         else:
